@@ -1,0 +1,65 @@
+<project name="hello world sample" default="jar">
+
+  <property name="output" value="build"/>
+  <property name="output.classes" value="${output}/classes"/>
+
+  <property name="junit.jar" value="lib/junit-3.8.1.jar"/>
+  <property name="src.tests" value="src/test/java"/>
+
+  <path id="test.classpath">
+    <pathelement location="${output.classes}"/>
+    <pathelement location="${junit.jar}"/>
+  </path>
+
+  <target name="init" description="init some directories">
+
+    <mkdir dir="${output}"/>
+    <mkdir dir="${output.classes}"/>
+
+  </target>
+
+  <target name="clean" depends="init" description="clean output">
+    <delete dir="build"/>
+  </target>
+
+  <target name="compile" depends="init" description="compile main classes">
+
+    <javac srcdir="src/main/java" destdir="${output.classes}" encoding="UTF-8" source="1.5" target="1.5" debug="true"
+           includeAntRuntime="true">
+
+    </javac>
+
+  </target>
+
+
+  <target name="compile-test" depends="init,compile" description="compile test classes">
+
+    <javac srcdir="${src.tests}" destdir="${output.classes}" encoding="UTF-8" source="1.5" target="1.5" debug="true"
+           includeAntRuntime="true">
+      <classpath refid="test.classpath"/>
+    </javac>
+
+  </target>
+
+  <target name="run-tests" depends="init,compile-test" description="run unit tests">
+    <junit haltonerror="false" haltonfailure="true" printsummary="on">
+      <classpath refid="test.classpath"/>
+
+      <batchtest fork="yes">
+        <fileset dir="${src.tests}">
+          <include name="**/*Test*.java"/>
+        </fileset>
+      </batchtest>
+
+    </junit>
+
+  </target>
+
+  <target name="package" depends="init, compile" description="package in jar file">
+    <jar destfile="${output}/hello-world.jar" basedir="${output.classes}" manifest="./MANIFEST.MF">
+
+    </jar>
+  </target>
+
+
+</project>
